@@ -1,6 +1,7 @@
 const { response, json } = require('express');
 const bcryptjs = require('bcryptjs');
 const Usuario = require('../models/usuario');
+const { generarJWT } = require("../helpers/generar-jwt");
 
 const usuariosGet = async (req, res = response) => {
     const { limite, desde } = req.query;
@@ -30,27 +31,21 @@ const getUsuarioByid = async (req, res) => {
 
 const usuariosPut = async (req, res) => {
     const { id } = req.params;
-    const { _id, password, correo, ...resto } = req.body;
+    const { _id, password, google, correo, ...resto } = req.body;
 
-    await Usuario.findByIdAndUpdate(id, resto);
-
-    const usuario = await Usuario.findOne({ _id: id });
+    const usuario = await Usuario.findByIdAndUpdate(id, resto);
 
     res.status(200).json({
-        msg: 'Usuario Actualizado exitosamente',
-        usuario
+        msg: 'Usuario actualizado'
     })
 }
 
 const usuariosDelete = async (req, res) => {
     const { id } = req.params;
-    await Usuario.findByIdAndUpdate(id, { estado: false });
-
-    const usuario = await Usuario.findOne({ _id: id });
+    const usuario = await Usuario.findByIdAndUpdate(id, { estado: false });
 
     res.status(200).json({
-        msg: 'Usuario eliminado exitosamente',
-        usuario
+        msg: 'Usuario eliminado'
     });
 }
 
@@ -67,33 +62,49 @@ const usuariosPost = async (req, res) => {
     });
 }
 
-const usuarioLogin = async (req, res) => {
+const usuariosLogin = async (req, res) => {
     const { correo, password } = req.body;
 
-    try {
+    try{
         const usuario = await Usuario.findOne({ correo });
 
-        if (!usuario) {
-            return res.status(400).json({ msg: 'Las credenciales proporcionadas no son válidas' });
-        }
-
-        const passwordValido = bcryptjs.compareSync(password, usuario.password);
-
-        if (!passwordValido) {
-            return res.status(400).json({ msg: 'Las credenciales proporcionadas no son válidas' });
-        }
-
-        const token = jwt.sign({
-            uid: usuario._id,
-            nombre: usuario.nombre
-        }, process.env.SECRET_KEY);
-
-        res.json({ token });
-    } catch (error) {
-        console.log(error);
-        res.status(500).json({ msg: 'Ocurrió un error al iniciar sesión. Por favor, inténtalo de nuevo.' });
+    if (!usuario) {
+        return res.status(400).json({
+            msg: 'Usuario no encontrado'
+        });
     }
-};
+
+    if(!usuario.estado){
+        return res.status(400).json({
+            msg: 'Usuario borrado de la base de datos'
+        })
+    }
+
+    const passwordValido = bcryptjs.compareSync(password, usuario.password);
+
+    if (!passwordValido) {
+        return res.status(400).json({
+            msg: 'Contraseña incorrecta'
+        });
+    }
+
+    const token = await generarJWT(usuario.id)
+
+    res.status(200).json({
+        msg_1: 'Inicio de sesión exitoso',
+        msg_2: 'Bienvenido '+ usuario.nombre,
+        msg_3: 'Este su token =>'+ token,
+    });
+
+    }catch(e){
+        console.log(e);
+        res.status(500).json({
+            msg: 'Error inesperado'
+        })
+    }
+
+}
+
 
 module.exports = {
     usuariosDelete,
@@ -101,5 +112,5 @@ module.exports = {
     usuariosGet,
     getUsuarioByid,
     usuariosPut,
-    usuarioLogin
+    usuariosLogin
 }
