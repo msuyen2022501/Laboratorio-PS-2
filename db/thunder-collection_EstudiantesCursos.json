@@ -1,0 +1,75 @@
+{
+    "client": "Thunder Client",
+    "collectionName": "EstudiantesCursos",
+    "dateExported": "2024-02-18T18:58:02.613Z",
+    "version": "1.1",
+    "folders": [],
+    "requests": [
+        {
+            "_id": "f12729fa-ea25-4934-923a-ef8dbc468a28",
+            "colId": "afb6912c-71a8-494a-8f02-db9d63b60682",
+            "containerId": "",
+            "name": "AsgEstudiante",
+            "url": "http://localhost:5000/laboratorio-ps-2/estudianteCursos",
+            "method": "POST",
+            "sortNum": 10000,
+            "created": "2024-02-18T18:17:30.728Z",
+            "modified": "2024-02-18T18:54:12.926Z",
+            "headers": [],
+            "params": [],
+            "body": {
+                "type": "json",
+                "raw": "{\n  \"correo\":\"Dieguito2@email.com\",\n  \"materia\":\"Informatica\"\n}",
+                "form": []
+            },
+            "tests": []
+        },
+        {
+            "_id": "794ad711-4bab-40b0-95e9-c55a54b0f3af",
+            "colId": "afb6912c-71a8-494a-8f02-db9d63b60682",
+            "containerId": "",
+            "name": "getUsuariosCursos",
+            "url": "http://localhost:5000/laboratorio-ps-2/estudianteCursos",
+            "method": "GET",
+            "sortNum": 30000,
+            "created": "2024-02-18T18:17:30.729Z",
+            "modified": "2024-02-18T18:17:30.729Z",
+            "headers": [],
+            "params": [],
+            "tests": []
+        },
+        {
+            "_id": "f3eaf6c0-0213-45c9-aafc-1ff837ef3e02",
+            "colId": "afb6912c-71a8-494a-8f02-db9d63b60682",
+            "containerId": "",
+            "name": "eliminarCursos",
+            "url": "http://localhost:5000/laboratorio-ps-2/estudianteCursos/65d238fa4c99d35398db4268",
+            "method": "DELETE",
+            "sortNum": 50000,
+            "created": "2024-02-18T18:17:30.730Z",
+            "modified": "2024-02-18T18:17:30.730Z",
+            "headers": [],
+            "params": [],
+            "tests": []
+        },
+        {
+            "_id": "9c91d438-34fb-4f74-b319-f822f0772bbd",
+            "colId": "afb6912c-71a8-494a-8f02-db9d63b60682",
+            "containerId": "",
+            "name": "CursosEstudiante",
+            "url": "http://localhost:5000/laboratorio-ps-2/estudianteCursos/buscar",
+            "method": "GET",
+            "sortNum": 60000,
+            "created": "2024-02-18T18:17:30.731Z",
+            "modified": "2024-02-18T18:55:42.722Z",
+            "headers": [],
+            "params": [],
+            "body": {
+                "type": "json",
+                "raw": "{\n  \"correo\": \"Dieguito2@email.com\"\n}",
+                "form": []
+            },
+            "tests": []
+        }
+    ]
+}
