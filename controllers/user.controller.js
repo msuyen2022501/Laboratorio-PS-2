@@ -51,16 +51,32 @@ const usuariosDelete = async (req, res) => {
 
 const usuariosPost = async (req, res) => {
     const { nombre, correo, password, role } = req.body;
-    const usuario = new Usuario({ nombre, correo, password, role });
 
-    const salt = bcryptjs.genSaltSync();
-    usuario.password = bcryptjs.hashSync(password, salt);
+    try {
+        const usuarioExistente = await Usuario.findOne({ nombre, estado: true });
 
-    await usuario.save();
-    res.status(200).json({
-        usuario
-    });
+        if (usuarioExistente) {
+            return res.status(400).json({
+                msg: 'Ya existe un usuario activo con este nombre'
+            });
+        }
+
+        const usuario = new Usuario({ nombre, correo, password, role });
+
+        const salt = bcryptjs.genSaltSync();
+        usuario.password = bcryptjs.hashSync(password, salt);
+
+        await usuario.save();
+
+        res.status(200).json({
+            usuario
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ msg: 'Error interno del servidor' });
+    }
 }
+
 
 const usuariosLogin = async (req, res) => {
     const { correo, password } = req.body;
@@ -104,7 +120,6 @@ const usuariosLogin = async (req, res) => {
     }
 
 }
-
 
 module.exports = {
     usuariosDelete,

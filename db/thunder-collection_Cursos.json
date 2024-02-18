@@ -1,0 +1,94 @@
+{
+    "client": "Thunder Client",
+    "collectionName": "Cursos",
+    "dateExported": "2024-02-18T18:57:56.724Z",
+    "version": "1.1",
+    "folders": [],
+    "requests": [
+        {
+            "_id": "eeb83ae2-104f-44d6-b88c-a6f402190a71",
+            "colId": "2d2877e2-0001-4e1c-ba39-45f8f60327bc",
+            "containerId": "",
+            "name": "cursosPost",
+            "url": "http://localhost:5000/laboratorio-ps-2/cursos",
+            "method": "POST",
+            "sortNum": 20000,
+            "created": "2024-02-18T18:17:34.672Z",
+            "modified": "2024-02-18T18:17:34.672Z",
+            "headers": [],
+            "params": [],
+            "body": {
+                "type": "json",
+                "raw": "{\n  \"nombre\":\"Biologia\",\n  \"categoria\":\"ciencias\",\n  \"maestro\":\"MaestroBraulio@email.com\"\n}",
+                "form": []
+            },
+            "tests": []
+        },
+        {
+            "_id": "80027f6c-e796-4eb2-9a84-111354f8dd08",
+            "colId": "2d2877e2-0001-4e1c-ba39-45f8f60327bc",
+            "containerId": "",
+            "name": "cursosGet",
+            "url": "http://localhost:5000/laboratorio-ps-2/cursos",
+            "method": "GET",
+            "sortNum": 30000,
+            "created": "2024-02-18T18:17:34.673Z",
+            "modified": "2024-02-18T18:17:34.673Z",
+            "headers": [],
+            "params": [],
+            "tests": []
+        },
+        {
+            "_id": "bd16854a-bf8f-4fb5-bfdb-81ac9c90cc5b",
+            "colId": "2d2877e2-0001-4e1c-ba39-45f8f60327bc",
+            "containerId": "",
+            "name": "getCursosById",
+            "url": "http://localhost:5000/laboratorio-ps-2/cursos/65d232de046c5cf088c5c200",
+            "method": "GET",
+            "sortNum": 40000,
+            "created": "2024-02-18T18:17:34.674Z",
+            "modified": "2024-02-18T18:56:09.109Z",
+            "headers": [],
+            "params": [],
+            "tests": []
+        },
+        {
+            "_id": "209f16f4-0d0a-4f53-96f9-695c050b4f1f",
+            "colId": "2d2877e2-0001-4e1c-ba39-45f8f60327bc",
+            "containerId": "",
+            "name": "cursosPut",
+            "url": "http://localhost:5000/laboratorio-ps-2/cursos/65d232de046c5cf088c5c200",
+            "method": "PUT",
+            "sortNum": 50000,
+            "created": "2024-02-18T18:17:34.675Z",
+            "modified": "2024-02-18T18:57:01.631Z",
+            "headers": [],
+            "params": [],
+            "body": {
+                "type": "json",
+                "raw": "{\n  \"nombre\":\"Matematica\",\n  \"maestro\":\"65d038a6fe936b0ab4ffbd2a\"\n}",
+                "form": []
+            },
+            "tests": []
+        },
+        {
+            "_id": "1f996d63-dec4-41a4-80e0-b03e6efaac0c",
+            "colId": "2d2877e2-0001-4e1c-ba39-45f8f60327bc",
+            "containerId": "",
+            "name": "cursoDelete",
+            "url": "http://localhost:5000/laboratorio-ps-2/cursos/65d038eafe936b0ab4ffbd37",
+            "method": "DELETE",
+            "sortNum": 60000,
+            "created": "2024-02-18T18:17:34.676Z",
+            "modified": "2024-02-18T18:17:34.676Z",
+            "headers": [],
+            "params": [],
+            "body": {
+                "type": "json",
+                "raw": "{\n  \"maestro\":\"65d038a6fe936b0ab4ffbd2a\"\n}",
+                "form": []
+            },
+            "tests": []
+        }
+    ]
+}
