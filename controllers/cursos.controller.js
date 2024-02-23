@@ -1,7 +1,7 @@
 const { response, json } = require('express');
 const Curso = require('../models/curso');
 const Usuario = require('../models/usuario');
-const usuarioHasCurso = require('../models/usuarioCurso');
+const usuarioCurso = require('../models/usuarioCurso');
 
 const cursosGet = async (req, res = response) => {
     const { limite, desde } = req.query;
@@ -20,15 +20,6 @@ const cursosGet = async (req, res = response) => {
     });
 }
 
-const getCursoByid = async (req, res) => {
-    const { id } = req.params;
-    const curso = await Curso.findOne({ _id: id });
-
-    res.status(200).json({
-        curso
-    });
-}
-
 const cursosPut = async (req, res) => {
     const { id } = req.params;
     const { _id, ...resto } = req.body;
@@ -44,7 +35,7 @@ const cursosDelete = async (req, res) => {
     const { id } = req.params;
     const curso = await Curso.findByIdAndUpdate(id, { estado: false });
 
-    await usuarioHasCurso.updateMany({ curso: id }, { estado: false });
+    await usuarioCurso.updateMany({ curso: id }, { estado: false });
 
     res.status(200).json({
         msg_1: 'Curso eliminado:',
@@ -58,8 +49,9 @@ const cursosPost = async (req, res) => {
     const Maestro = await Usuario.findOne({ correo: maestro });
     if (!Maestro) {
         res.status(400).json({
-            msg: 'el maestro asignado no existe'
-        })
+            msg: 'El maestro asignado no existe'
+        });
+        return;
     }
 
     if (Maestro.role !== "TEACHER_ROLE") {
@@ -68,18 +60,31 @@ const cursosPost = async (req, res) => {
         });
     }
 
-    const curso = new Curso({ nombre, categoria, maestro });
+    const cursoExistente = await Curso.findOne({ nombre, estado: false });
 
-    await curso.save();
-    res.status(200).json({
-        curso
-    });
+    if (cursoExistente) {
+        cursoExistente.estado = true; 
+        await cursoExistente.save();
+        
+        res.status(200).json({
+            msg: 'Curso reactivado',
+            curso: cursoExistente
+        });
+    } else {
+        const cursoNuevo = new Curso({ nombre, categoria, maestro });
+        await cursoNuevo.save();
+
+        res.status(200).json({
+            msg: 'Curso creado',
+            curso: cursoNuevo
+        });
+    }
 }
+
 
 module.exports = {
     cursosDelete,
     cursosPost,
     cursosGet,
-    getCursoByid,
     cursosPut
 }

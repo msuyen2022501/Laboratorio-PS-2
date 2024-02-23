@@ -2,6 +2,7 @@ const { response, json } = require('express');
 const bcryptjs = require('bcryptjs');
 const Usuario = require('../models/usuario');
 const { generarJWT } = require("../helpers/generar-jwt");
+const usuarioCurso = require("../models/usuarioCurso")
 
 const usuariosGet = async (req, res = response) => {
     const { limite, desde } = req.query;
@@ -20,15 +21,6 @@ const usuariosGet = async (req, res = response) => {
     });
 }
 
-const getUsuarioByid = async (req, res) => {
-    const { id } = req.params;
-    const usuario = await Usuario.findOne({ _id: id });
-
-    res.status(200).json({
-        usuario
-    });
-}
-
 const usuariosPut = async (req, res) => {
     const { id } = req.params;
     const { _id, password, google, correo, ...resto } = req.body;
@@ -42,12 +34,18 @@ const usuariosPut = async (req, res) => {
 
 const usuariosDelete = async (req, res) => {
     const { id } = req.params;
-    const usuario = await Usuario.findByIdAndUpdate(id, { estado: false });
 
-    res.status(200).json({
-        msg: 'Usuario eliminado'
-    });
+    try {
+        const usuario = await Usuario.findByIdAndUpdate(id, {estado: false}); 
+        res.status(200).json({
+            msg: 'Usuario eliminado'
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ msg: 'Error interno del servidor' });
+    }
 }
+
 
 const usuariosPost = async (req, res) => {
     const { nombre, correo, password, role } = req.body;
@@ -125,7 +123,6 @@ module.exports = {
     usuariosDelete,
     usuariosPost,
     usuariosGet,
-    getUsuarioByid,
     usuariosPut,
     usuariosLogin
 }

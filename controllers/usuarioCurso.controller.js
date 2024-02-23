@@ -5,67 +5,38 @@ const Curso1 = require('../models/curso');
 
 const usuarioCursoGet = async (req, res = response) => {
     const { limite, desde } = req.query;
-    const query = { estado: true };
-
-    const [total, usuarioCursos] = await Promise.all([
-        usuarioCurso.countDocuments(query),
-        usuarioCurso.find(query)
-            .skip(Number(desde))
-            .limit(Number(limite))
-    ]);
-
-    res.status(200).json({
-        total,
-        usuarioCursos
-    });
-}
-
-const getUsuarioCursoByid = async (req, res) => {
-    const { correo } = req.body;
+    const query = { estado: true }; 
 
     try {
-        const estudiante = await Usuario.findOne({ correo });
+        const [total, usuarioCursos] = await Promise.all([
+            usuarioCurso.countDocuments(query),
+            usuarioCurso.find(query)
+                .skip(Number(desde))
+                .limit(Number(limite))
+                .populate({
+                    path: 'estudiante',
+                    match: { estado: true },
+                    select: 'nombre'
+                })
+                .populate({
+                    path: 'curso',
+                    match: { estado: true },
+                    select: 'nombre'
+                })
+                .select('estudiante curso fecha_inscripcion')
+        ]);
 
-        const cursosInscritos = await usuarioCurso.find({ estudiante: estudiante.id, estado: true }).populate('curso');
+        const usuarioCursosFiltrados = usuarioCursos.filter(uc => uc.estudiante !== null);
 
-        if (cursosInscritos.length === 0) {
-            return res.status(400).json({ msg: 'El estudiante no está inscrito en ningún curso' });
-        }
-
-        const listaCursos = cursosInscritos.map(curso => ({
-            nombre: curso.curso.nombre,
-            fecha_inscripcion: curso.fecha_inscripcion
-        }));
-
-        res.status(200).json({ 
-            cursos: listaCursos 
+        res.status(200).json({
+            total,
+            usuarioCursos: usuarioCursosFiltrados
         });
-
     } catch (error) {
         console.error(error);
         res.status(500).json({ msg: 'Error interno del servidor' });
     }
-
-}
-
-const usuarioCursoDelete = async (req, res) => {
-    const { id } = req.params;
-
-    try {
-        const usuarioCursoEliminado = await usuarioCurso.findOneAndUpdate({ _id: id, estado: true }, { estado: false }).populate('estudiante');
-
-        if (!usuarioCursoEliminado) {
-            return res.status(404).json({ msg: 'La inscripción al curso no se encuentra o ya ha sido eliminada' });
-        }
-
-        const nombreEstudiante = usuarioCursoEliminado.estudiante.nombre;
-
-        res.status(200).json({ msg: `El estudiante ${nombreEstudiante} ha sido eliminado del curso` });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ msg: 'Error interno del servidor' });
-    }
-}
+};
 
 
 const usuarioCursoPost = async (req, res) => {
@@ -77,14 +48,14 @@ const usuarioCursoPost = async (req, res) => {
             return res.status(400).json({ msg: 'El usuario no existe' });
         }
 
-        const curso = await Curso1.findOne({ nombre: materia });
+        let curso = await Curso1.findOne({ nombre: materia, estado: true });
         if (!curso) {
             return res.status(400).json({ msg: 'El curso que se quiere asignar no existe' });
         }
 
-        const cursoEliminado = await usuarioCurso.findOne({ estudiante: estudiante.id, curso: curso.id, estado: false });
-        if (cursoEliminado) {
-            return res.status(400).json({ msg: 'El curso ha sido eliminado previamente' });
+        if (!curso.estado) {
+            curso.estado = true;
+            await curso.save();
         }
 
         const cantidadCursosInscritos = await usuarioCurso.countDocuments({ estudiante: estudiante.id });
@@ -120,9 +91,8 @@ const usuarioCursoPost = async (req, res) => {
     }
 };
 
+
 module.exports = {
-    usuarioCursoDelete,
     usuarioCursoPost,
-    usuarioCursoGet,
-    getUsuarioCursoByid
+    usuarioCursoGet
 }
